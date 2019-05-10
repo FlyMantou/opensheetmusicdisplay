@@ -20,6 +20,7 @@ import {AbstractExpression} from "../MusicalScore/VoiceData/Expressions/Abstract
 import {Dictionary} from "typescript-collections";
 import {NoteEnum} from "..";
 import {AutoColorSet} from "../MusicalScore";
+import {MusicSheetPlayer} from "../MusicalScore/Player";
 
 /**
  * The main class and control point of OpenSheetMusicDisplay.<br>
@@ -563,5 +564,18 @@ export class OpenSheetMusicDisplay {
     public get Version(): string {
         return this.version;
     }
+    public createPlayer(playCallback: (noteValues: number[], channel: number) => void): void {
+        this.player = new MusicSheetPlayer(80, this.graphic, this.cursor, playCallback);
+    }
     //#endregion
+    private player: MusicSheetPlayer;
+    public get Player(): MusicSheetPlayer {
+        return this.player;
+    }
+    public startPlayer(): void {
+        this.player.startPlay();
+    }
+    public stopPlayer(): void {
+        this.player.stopPlay();
+    }
 }

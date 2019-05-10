@@ -168,4 +168,16 @@ export class Cursor {
   public get Hidden(): boolean {
     return this.hidden;
   }
+
+    public get CurrentVoiceKey(): Array<number> {
+        const arr: Array<number> = [];
+        for (let i: number = 0; i < this.iterator.CurrentVoiceEntries.length; i++) {
+            for (let j: number = 0; j < this.iterator.CurrentVoiceEntries[i].Notes.length; j++) {
+                if (this.iterator.CurrentVoiceEntries[i].Notes[j].Pitch) {
+                    arr.push(this.iterator.CurrentVoiceEntries[i].Notes[j].Pitch.getHalfTone());
+                }
+            }
+        }
+        return arr;
+    }
 }

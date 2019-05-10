@@ -564,6 +564,24 @@ export class MusicPartManagerIterator {
         }
         return entries;
     }
-
+    public nextVoiceEntryTimeStemp(): number {
+        if (this.currentVoiceEntryIndex + 1 >= 0 && this.currentVoiceEntryIndex + 1 < this.currentMeasure.VerticalSourceStaffEntryContainers.length) {
+            const currentContainer: VerticalSourceStaffEntryContainer = this.currentMeasure.VerticalSourceStaffEntryContainers[this.currentVoiceEntryIndex + 1];
+            const timeStemp: Fraction = currentContainer.Timestamp;
+            console.log("currentContainer.Timestamp-->" + currentContainer.Timestamp);
+            console.log("this.currentMeasure.AbsoluteTimestamp-->" + this.currentMeasure.AbsoluteTimestamp);
+            const ret: Fraction = Fraction.plus(this.currentMeasure.AbsoluteTimestamp, timeStemp);
+            return ret.RealValue;
+        } else {
+            console.log("小节结尾");
+            if (this.currentMeasureIndex >= 0 && this.currentMeasureIndex < this.manager.MusicSheet.SourceMeasures.length) {
+                const measure: SourceMeasure = this.manager.MusicSheet.SourceMeasures[this.currentMeasureIndex];
+                const ret: number = measure.AbsoluteTimestamp.RealValue + 1;
+                return ret;
+            } else {
+                return undefined;
+            }
+        }
+    }
 
 }

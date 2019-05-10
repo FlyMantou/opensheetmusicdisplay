@@ -143,7 +143,13 @@ import { OpenSheetMusicDisplay } from '../src/OpenSheetMusicDisplay/OpenSheetMus
                 openSheetMusicDisplay.clear();
             }
         }
-
+        //load midi
+        MIDI.loader = new widgets.Loader({
+            message: "Loading: Soundfont..."
+        });
+        MIDI.loadPlugin(function (){
+            MIDI.loader.stop();
+        });
         // Create OSMD object and canvas
         openSheetMusicDisplay = new OpenSheetMusicDisplay(canvas, {
             autoResize: true,
@@ -179,6 +185,17 @@ import { OpenSheetMusicDisplay } from '../src/OpenSheetMusicDisplay/OpenSheetMus
         openSheetMusicDisplay.setLogLevel('info');
         document.body.appendChild(canvas);
 
+        //add key listener : P (play/pause)
+        $(document).keydown(function (event) {
+            console.log(event.keyCode);
+            if (event.keyCode === 80) {//P
+                if (openSheetMusicDisplay.Player.IsPlay) {
+                    openSheetMusicDisplay.stopPlayer();
+                } else {
+                    openSheetMusicDisplay.startPlayer();
+                }
+            }
+        });
         window.addEventListener("keydown", function(e) {
             var event = window.event ? window.event : e;
             if (event.keyCode === 39) {
@@ -281,10 +298,26 @@ import { OpenSheetMusicDisplay } from '../src/OpenSheetMusicDisplay/OpenSheetMus
         if (!isCustom && custom.parentElement === selectSample) {
             selectSample.removeChild(custom);
         }
+
+        //init with midi.js
+        openSheetMusicDisplay.cursor.show();
+        openSheetMusicDisplay.createPlayer(function (noteValues, channel) {
+            console.log("noteValues"+noteValues);
+            console.log("channel"+channel);
+            MIDI.setVolume(0, 127);
+            for (let i=0;i<lastNoteArr.length;i++){
+                MIDI.noteOff(0, lastNoteArr[i], 0);
+            }
+            lastNoteArr.clear();
+            for (let x=0;x<noteValues.length;x++){
+                lastNoteArr.push(noteValues[x]);
+                MIDI.noteOn(0, noteValues[x], 127, 0);
+            }
+        });
         // Enable controls again
         enable();
     }
-
+    var lastNoteArr = [];
     function logCanvasSize() {
         zoomDiv.innerHTML = Math.floor(zoom * 100.0) + "%";
     }
