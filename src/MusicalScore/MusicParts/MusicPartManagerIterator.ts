@@ -564,7 +564,7 @@ export class MusicPartManagerIterator {
         }
         return entries;
     }
-    public nextVoiceEntryTimeStemp(): number {
+    public nextVoiceEntryTimeStemp(rhythmInstruction: Fraction): number {
         if (this.currentVoiceEntryIndex + 1 >= 0 && this.currentVoiceEntryIndex + 1 < this.currentMeasure.VerticalSourceStaffEntryContainers.length) {
             const currentContainer: VerticalSourceStaffEntryContainer = this.currentMeasure.VerticalSourceStaffEntryContainers[this.currentVoiceEntryIndex + 1];
             const timeStemp: Fraction = currentContainer.Timestamp;
@@ -576,12 +576,19 @@ export class MusicPartManagerIterator {
             console.log("小节结尾");
             if (this.currentMeasureIndex >= 0 && this.currentMeasureIndex < this.manager.MusicSheet.SourceMeasures.length) {
                 const measure: SourceMeasure = this.manager.MusicSheet.SourceMeasures[this.currentMeasureIndex];
-                const ret: number = measure.AbsoluteTimestamp.RealValue + 1;
+                const ret: number = measure.AbsoluteTimestamp.RealValue + rhythmInstruction.RealValue;
+                console.log("rhythmInstruction-->" + rhythmInstruction);
                 return ret;
             } else {
                 return undefined;
             }
         }
+    }
+    public getCurrentMeasureBpm(): number {
+        if (this.CurrentMeasure.TempoExpressions === undefined || this.CurrentMeasure.TempoExpressions.length === 0) {
+            return 0;
+        }
+        return this.CurrentMeasure.TempoExpressions[0].InstantaneousTempo.TempoInBpm;
     }
 
 }

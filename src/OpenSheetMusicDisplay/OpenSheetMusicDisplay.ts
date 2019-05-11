@@ -565,7 +565,7 @@ export class OpenSheetMusicDisplay {
         return this.version;
     }
     public createPlayer(playCallback: (noteValues: number[], channel: number) => void): void {
-        this.player = new MusicSheetPlayer(80, this.graphic, this.cursor, playCallback);
+        this.player = new MusicSheetPlayer(80, this.sheet, this.cursor, playCallback);
     }
     //#endregion
     private player: MusicSheetPlayer;

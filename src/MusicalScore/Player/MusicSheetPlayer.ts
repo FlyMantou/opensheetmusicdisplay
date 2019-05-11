@@ -1,12 +1,12 @@
 import {Cursor} from "../../OpenSheetMusicDisplay";
-import {GraphicalMusicSheet} from "../Graphical/GraphicalMusicSheet";
+import {MusicSheet} from "../MusicSheet";
 
 
 export class MusicSheetPlayer {
     get IsPlay(): boolean {
         return this.isPlay;
     }
-    constructor(bpm: number, musicSheet: GraphicalMusicSheet, cursor: Cursor, playCallback: (noteValues: number[], channel: number) => void) {
+    constructor(bpm: number, musicSheet: MusicSheet, cursor: Cursor, playCallback: (noteValues: number[], channel: number) => void) {
         this.bpm = bpm;
         this.musicSheet = musicSheet;
         this.cursor = cursor;
@@ -14,7 +14,7 @@ export class MusicSheetPlayer {
     }
 
     private playCallback: (noteValues: number[], channel: number) => void;
-    public musicSheet: GraphicalMusicSheet;
+    public musicSheet: MusicSheet;
     public bpm: number = 80;
     public cursor: Cursor;
     private isPlay: boolean = false;
@@ -49,14 +49,18 @@ export class MusicSheetPlayer {
                 const ct: number = new Date().getTime();
                 thisPtr.cursor.next();
                 thisPtr.playCallback(thisPtr.cursor.CurrentVoiceKey, 0);
-                const nextRealValue: number = thisPtr.cursor.Iterator.nextVoiceEntryTimeStemp();
-                console.log("nextRealValue-->" + nextRealValue);
-                console.log(thisPtr.cursor.Iterator);
+                const nextRealValue: number = thisPtr.cursor.Iterator.nextVoiceEntryTimeStemp(thisPtr.musicSheet.SheetPlaybackSetting.rhythm);
+                //console.log("nextRealValue-->" + nextRealValue);
+                //console.log(thisPtr.cursor.Iterator);
                 thisPtr.currentTimestamp = nextRealValue;
-                delay = ( thisPtr.currentTimestamp) * 4 * (60000 / thisPtr.bpm);
-                console.log("delay-->" + delay);
+                if (thisPtr.cursor.Iterator.getCurrentMeasureBpm() !== 0) {
+                    thisPtr.bpm = thisPtr.cursor.Iterator.getCurrentMeasureBpm();
+                }
+                delay = ( thisPtr.currentTimestamp) * thisPtr.musicSheet.SheetPlaybackSetting.rhythm.Numerator * (60000 / thisPtr.bpm );
+                //console.log("Numerator-->" + thisPtr.musicSheet.SheetPlaybackSetting.rhythm.Numerator);
+                //console.log("delay-->" + delay);
                 const offset: number = new Date().getTime() - thisPtr.startTime - thisPtr.pauseWaitTime;
-                console.log("offset-->" + offset);
+                //console.log("offset-->" + offset);
                 thisPtr.loop(delay - offset, instance);
                 console.log("执行时间-->" + (new Date().getTime() - ct));
             }

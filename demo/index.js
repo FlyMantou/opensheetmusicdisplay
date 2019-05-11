@@ -306,14 +306,16 @@ import { OpenSheetMusicDisplay } from '../src/OpenSheetMusicDisplay/OpenSheetMus
             console.log("channel"+channel);
             MIDI.setVolume(0, 127);
             for (let i=0;i<lastNoteArr.length;i++){
-                MIDI.noteOff(0, lastNoteArr[i], 0);
+                MIDI.noteOff(0, lastNoteArr[i]+5, 0);
             }
             lastNoteArr.clear();
             for (let x=0;x<noteValues.length;x++){
                 lastNoteArr.push(noteValues[x]);
-                MIDI.noteOn(0, noteValues[x], 127, 0);
+                MIDI.noteOn(0, noteValues[x]+5, 127, 0);
             }
         });
+        console.log(openSheetMusicDisplay.Sheet);
+        console.log(openSheetMusicDisplay.GraphicSheet);
         // Enable controls again
         enable();
     }
